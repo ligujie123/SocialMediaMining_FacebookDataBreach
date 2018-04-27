@@ -1,0 +1,115 @@
+#geographic analysis 
+done
+#wordcloud analysis
+done
+#hashtag
+1. frequency analysis -> 1tag 2tag 3tag
+2. based on more than 1 tag, I construct the hashtag co-occurrence network.
+3. based on more than 1 tag, I do the association rule analysis
+done
+#text pre-processing
+#sentiment analysis
+based on day or hour
+done
+
+
+#topic modelling
+done
+#word2vec
+done
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+with open('stopwords.txt', 'r') as f:
+    stopwords = [x.strip() for x in f.readlines()]
+
+
+def clean_tweet(tweet):
+    # Remove tickers
+    tweet = re.sub(r'\$\w*','', tweet)
+    # Remove URLs
+    tweet = re.sub(r'https?:\/\/.*\/\w*','', tweet)
+    # Remove puncutation
+    tweet = re.sub(r'[' + string.punctuation + ']+', ' ', tweet)
+    # Tokenize text
+    tokenizer = TweetTokenizer(strip_handles=True, reduce_len=True)
+    tokens = tokenizer.tokenize(tweet)
+    # Remove stopwords and single characters
+    tokens = [i.lower() for i in tokens if i not in stopwords and len(i) > 1]
+    
+    return tokens
+
+twitter[1]
+temp=twitter[1]
+temp = re.sub(r'\$\w*','', temp)
+temp
+temp = re.sub(r'https?:\/\/.*\/\w*','', temp)
+temp
+temp = re.sub(r'RT','', temp)
+temp
+twitter=[]
+client = MongoClient('localhost', 27017)
+db = client.Facebook
+for doc in db.tweets.distinct('text'):
+    twitter.append(doc)
+
+
+with open('stopwords.txt', 'r') as f:
+    stopwords = [x.strip() for x in f.readlines()]
+
+
+def clean_tweet(tweet):
+    # Remove tickers
+    tweet = re.sub(r'\$\w*','', tweet)
+    # Remove URLs
+    tweet = re.sub(r'https?:\/\/.*\/\w*','', tweet)
+    #Remove RT
+    tweet = re.sub(r'RT','', tweet)
+    # Remove puncutation
+    tweet = re.sub(r'[' + string.punctuation + ']+', ' ', tweet)
+    # Tokenize text
+    tokenizer = TweetTokenizer(strip_handles=True, reduce_len=True)
+    tokens = tokenizer.tokenize(tweet)
+    # Remove stopwords and single characters
+    tokens = [i.lower() for i in tokens if i not in stopwords and len(i) > 1]
+    
+    return tokens
+
+cleaned_tweets = []
+for tweet in twitter:
+    cleaned_tweets.append(clean_tweet(tweet))
+
+df = pd.DataFrame({'cleaned_text':cleaned_tweets})
+words = [x for l in df.cleaned_text.values for x in l]
+len(words)
+c = Counter(words)
+top = 20
+most_common = c.most_common()[1:]
+x, y = zip(*most_common[:top])
+
+fig, ax = pl.subplots(1, figsize=(16,9))
+ax.barh(range(len(x)), y)
+ax.invert_yaxis()
+ax.set_yticks(np.arange(len(x)) + 0.4)
+ax.set_yticklabels(x, fontsize=18);
